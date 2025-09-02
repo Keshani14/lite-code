@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Edit
@@ -423,53 +425,91 @@ fun CodeEditor(
         }
     }
     
-    androidx.compose.foundation.layout.Box(
+    androidx.compose.foundation.layout.Row(
         modifier = modifier
             .fillMaxSize()
             .background(backgroundColor)
             .padding(16.dp)
     ) {
-        if (editorState.textField.value.text.isEmpty()) {
-            androidx.compose.material3.Text(
-                text = "Type your code here...",
-                style = androidx.compose.ui.text.TextStyle(
-                    fontSize = 16.sp,
-                    color = placeholderColor,
-                    lineHeight = 24.sp
-                )
-            )
-        }
-        
-        // Input layer: Transparent text field for user input
-        androidx.compose.foundation.text.BasicTextField(
-            value = editorState.textField.value,
-            onValueChange = { editorState.onTextChange(it) },
-            textStyle = androidx.compose.ui.text.TextStyle(
-                fontSize = 16.sp,
-                color = androidx.compose.ui.graphics.Color.Transparent,
-                lineHeight = 24.sp
-            ),
-            cursorBrush = androidx.compose.ui.graphics.SolidColor(textColor),
-            modifier = Modifier.fillMaxSize(),
-            decorationBox = { innerTextField ->
-                // Only render the cursor and selection, not the text
-                androidx.compose.foundation.layout.Box {
-                    // Render the highlighted text in the background
-                    if (editorState.textField.value.text.isNotEmpty()) {
+        // Line numbers column
+        if (editorState.textField.value.text.isNotEmpty()) {
+            val lineCount = editorState.textField.value.text.count { it == '\n' } + 1
+            val lineNumbersColor = if (isSystemDarkMode) androidx.compose.ui.graphics.Color(0xFF858585) else androidx.compose.ui.graphics.Color.Gray
+            val lineNumbersBgColor = if (isSystemDarkMode) androidx.compose.ui.graphics.Color(0xFF2D2D30) else androidx.compose.ui.graphics.Color(0xFFF8F8F8)
+            
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .width(25.dp)
+                    .fillMaxHeight()
+                    .background(lineNumbersBgColor)
+                    .padding(end = 8.dp)
+            ) {
+                androidx.compose.foundation.layout.Column {
+                    repeat(lineCount) { lineIndex ->
                         androidx.compose.material3.Text(
-                            text = highlightedText,
+                            text = "${lineIndex + 1}",
                             style = androidx.compose.ui.text.TextStyle(
-                                fontSize = 16.sp,
+                                fontSize = 14.sp,
+                                color = lineNumbersColor,
                                 lineHeight = 24.sp
                             ),
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 0.dp, horizontal = 8.dp)
                         )
                     }
-                    // Render only the cursor and selection from the text field
-                    innerTextField()
                 }
             }
-        )
+        }
+        
+        // Code content area
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            if (editorState.textField.value.text.isEmpty()) {
+                androidx.compose.material3.Text(
+                    text = "Type your code here...",
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 16.sp,
+                        color = placeholderColor,
+                        lineHeight = 24.sp
+                    )
+                )
+            }
+            
+            // Input layer: Transparent text field for user input
+            androidx.compose.foundation.text.BasicTextField(
+                value = editorState.textField.value,
+                onValueChange = { editorState.onTextChange(it) },
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 16.sp,
+                    color = androidx.compose.ui.graphics.Color.Transparent,
+                    lineHeight = 24.sp
+                ),
+                cursorBrush = androidx.compose.ui.graphics.SolidColor(textColor),
+                modifier = Modifier.fillMaxSize(),
+                decorationBox = { innerTextField ->
+                    // Only render the cursor and selection, not the text
+                    androidx.compose.foundation.layout.Box {
+                        // Render the highlighted text in the background
+                        if (editorState.textField.value.text.isNotEmpty()) {
+                            androidx.compose.material3.Text(
+                                text = highlightedText,
+                                style = androidx.compose.ui.text.TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 24.sp
+                                ),
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        // Render only the cursor and selection from the text field
+                        innerTextField()
+                    }
+                }
+            )
+        }
     }
 }
 
