@@ -49,8 +49,6 @@ import androidx.compose.ui.unit.sp
 import com.example.codeeditor.ui.theme.CodeEditorTheme
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import com.example.codeeditor.SyntaxHighlighter
-import com.example.codeeditor.getSyntaxRulesForFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {

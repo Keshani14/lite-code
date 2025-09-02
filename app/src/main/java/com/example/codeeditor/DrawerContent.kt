@@ -3,34 +3,25 @@ package com.example.codeeditor
 
 import android.content.Context
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -43,7 +34,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -109,24 +99,15 @@ fun DrawerContent(
     var showOpenDialog = remember { mutableStateOf(false) }
     var showConfirmDialog = remember { mutableStateOf(false) }
     var pendingFileName = remember { mutableStateOf("") }
-    val extensions = listOf(".txt",".kt",  ".java", ".py", ".c", ".cpp")
-    var selectedExtension = remember { mutableStateOf(extensions.first()) }
+    val extensions = listOf(".txt", ".kt", ".java", ".py", ".c", ".cpp")
+    var selectedExtension = remember { mutableStateOf(".txt") }
 
-    // Professional dark blue gradient background for the sidebar
-    val sidebarGradient = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1a237e),  // Deep dark blue start
-            Color(0xFF0d47a1),  // Dark blue middle
-            Color(0xFF1565c0)   // Professional blue end
-        )
-    )
-    
     Column(
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(0.6f)
-            .background(sidebarGradient)
-            .padding(top = 80.dp, bottom = 16.dp, start = 0.dp, end = 0.dp), // Top padding to avoid overlap
+            .background(Color(0xFF0d47a1))
+            .padding(top = 80.dp, bottom = 16.dp, start = 0.dp, end = 0.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.Start
     ) {
@@ -180,10 +161,9 @@ fun DrawerContent(
             onDismissRequest = { showDialog.value = false },
             confirmButton = {
                 TextButton(onClick = {
-                    val finalName = if (fileName.value.endsWith(selectedExtension.value)) {
-                        fileName.value
-                    } else {
-                        fileName.value + selectedExtension.value
+                    var finalName = fileName.value
+                    if (!finalName.endsWith(selectedExtension.value)) {
+                        finalName = finalName + selectedExtension.value
                     }
                     onNewFile(finalName)
                     showDialog.value = false
@@ -245,10 +225,9 @@ fun DrawerContent(
             onDismissRequest = { showSaveDialog.value = false },
             confirmButton = {
                 TextButton(onClick = {
-                    val finalName = if (fileName.value.endsWith(selectedExtension.value)) {
-                        fileName.value
-                    } else {
-                        fileName.value + selectedExtension.value
+                    var finalName = fileName.value
+                    if (!finalName.endsWith(selectedExtension.value)) {
+                        finalName = finalName + selectedExtension.value
                     }
 
                     // Check if file already exists
@@ -330,8 +309,9 @@ fun DrawerContent(
     
     // Show "Open File" dialog
     if (showOpenDialog.value) {
-        val initialFiles = context.filesDir.listFiles()?.toList()?.sortedByDescending { it.lastModified() } ?: emptyList()
-        val filesState = remember { mutableStateOf(initialFiles) }
+        val fileList = context.filesDir.listFiles()?.toList() ?: emptyList()
+        val sortedFiles = fileList.sortedWith(compareByDescending { it.lastModified() })
+        val filesState = remember { mutableStateOf(sortedFiles) }
         AlertDialog(
             onDismissRequest = { showOpenDialog.value = false },
             title = { Text("Select a file") },
@@ -356,7 +336,9 @@ fun DrawerContent(
                             )
                             TextButton(onClick = {
                                 file.delete()
-                                filesState.value = context.filesDir.listFiles()?.toList()?.sortedByDescending { it.lastModified() } ?: emptyList()
+                                val updatedFileList = context.filesDir.listFiles()?.toList() ?: emptyList()
+                                val updatedSortedFiles = updatedFileList.sortedWith(compareByDescending { it.lastModified() })
+                                filesState.value = updatedSortedFiles
                             }) {
                                 Text("Delete", color = Color.Red)
                             }

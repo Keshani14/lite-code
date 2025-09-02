@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="CodeEditor.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-09-02T14:46:46.588866Z">
+        <DropdownSelection timestamp="2025-09-02T18:33:55.441747500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pushpika sampath\.android\avd\Pixel_5.avd" />

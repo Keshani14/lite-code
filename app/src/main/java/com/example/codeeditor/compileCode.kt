@@ -42,13 +42,11 @@ fun compileCode(
         if (syntaxErrors.isNotEmpty()) {
             Log.d("compileCode", "Syntax errors found: ${syntaxErrors.size}")
             // Build error message
-            val errorMessage = buildString {
-                append("Compilation failed due to syntax errors:\n\n")
-                syntaxErrors.forEach { error ->
-                    append("Line ${error.lineNumber}: ${error.message}\n")
-                }
-                append("\nPlease fix these errors before compiling.")
+            var errorMessage = "Compilation failed due to syntax errors:\n\n"
+            for (error in syntaxErrors) {
+                errorMessage += "Line ${error.lineNumber}: ${error.message}\n"
             }
+            errorMessage += "\nPlease fix these errors before compiling."
             onResult(errorMessage)
             return
         }
