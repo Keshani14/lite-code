@@ -187,11 +187,13 @@ class MainActivity : ComponentActivity() {
                                     IconButton(
                                         onClick = {
                                             try {
+                                                android.util.Log.d("MainActivity", "Compile button clicked for file: $currentFileName")
                                                 compileCode(context, editorState.textField.value.text, fileManager, currentFileName) { output ->
                                                     compileOutput = output
                                                     showCompilerInterface = true
                                                 }
                                             } catch (e: Exception) {
+                                                android.util.Log.e("MainActivity", "Error in compile button click: ${e.message}", e)
                                                 compileOutput = "Error: ${e.message}"
                                                 showCompilerInterface = true
                                             }

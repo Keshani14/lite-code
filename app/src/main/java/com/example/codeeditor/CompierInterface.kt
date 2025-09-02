@@ -112,7 +112,7 @@ fun CompilerInterface(
                     // Copy button on the left (only show for successful compilation)
                     Button(
                         onClick = {
-                            val pathOnly = compileOutput.substringAfter("File saved successfully at ").trim()
+                            val pathOnly = compileOutput.substringAfter("File saved at: ").trim()
                             if (pathOnly.isNotEmpty()) {
                                 clipboardManager.setText(AnnotatedString(pathOnly))
                             }

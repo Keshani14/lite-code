@@ -1,3 +1,4 @@
+
 package com.example.codeeditor
 
 import android.content.Context
@@ -108,7 +109,7 @@ fun DrawerContent(
     var showOpenDialog = remember { mutableStateOf(false) }
     var showConfirmDialog = remember { mutableStateOf(false) }
     var pendingFileName = remember { mutableStateOf("") }
-    val extensions = listOf(".kt", ".txt", ".java", ".py", ".c", ".cpp", ".h", ".hpp")
+    val extensions = listOf(".txt",".kt",  ".java", ".py", ".c", ".cpp")
     var selectedExtension = remember { mutableStateOf(extensions.first()) }
 
     // Professional dark blue gradient background for the sidebar
@@ -329,7 +330,7 @@ fun DrawerContent(
     
     // Show "Open File" dialog
     if (showOpenDialog.value) {
-        val initialFiles = context.filesDir.listFiles()?.toList() ?: emptyList()
+        val initialFiles = context.filesDir.listFiles()?.toList()?.sortedByDescending { it.lastModified() } ?: emptyList()
         val filesState = remember { mutableStateOf(initialFiles) }
         AlertDialog(
             onDismissRequest = { showOpenDialog.value = false },
@@ -355,7 +356,7 @@ fun DrawerContent(
                             )
                             TextButton(onClick = {
                                 file.delete()
-                                filesState.value = context.filesDir.listFiles()?.toList() ?: emptyList()
+                                filesState.value = context.filesDir.listFiles()?.toList()?.sortedByDescending { it.lastModified() } ?: emptyList()
                             }) {
                                 Text("Delete", color = Color.Red)
                             }
