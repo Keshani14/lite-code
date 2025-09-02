@@ -17,12 +17,17 @@ class FileManager(private val context: Context) {
 
     // Save text content to a file (creates it if missing)
     fun saveFile(fileName: String, content: String) {
-        val file = File(context.filesDir, fileName)
-        if (!file.exists()) {
-            file.createNewFile()
+        try {
+            val file = File(context.filesDir, fileName)
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+            file.writeText(content)
+            Log.d("FileManager", "Saved to ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("FileManager", "Error saving file: ${e.message}", e)
+            throw e
         }
-        file.writeText(content)
-        Log.d("FileManager", "Saved to ${file.absolutePath}")
     }
 
     // Open a file and return its content (empty if not exists)

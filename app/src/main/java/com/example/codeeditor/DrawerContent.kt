@@ -108,7 +108,7 @@ fun DrawerContent(
     var showOpenDialog = remember { mutableStateOf(false) }
     var showConfirmDialog = remember { mutableStateOf(false) }
     var pendingFileName = remember { mutableStateOf("") }
-    val extensions = listOf(".kt", ".txt", ".java", ".py")
+    val extensions = listOf(".kt", ".txt", ".java", ".py", ".c", ".cpp", ".h", ".hpp")
     var selectedExtension = remember { mutableStateOf(extensions.first()) }
 
     // Professional dark blue gradient background for the sidebar

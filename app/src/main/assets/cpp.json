@@ -1,0 +1,13 @@
+{
+  "keywords": [
+    "alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand", "bitor", "bool", "break", "case", "catch", "char", "char16_t", "char32_t", "class", "compl", "concept", "const", "const_cast", "consteval", "constexpr", "constinit", "continue", "co_await", "co_return", "co_yield", "decltype", "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false", "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private", "protected", "public", "register", "reinterpret_cast", "requires", "return", "short", "signed", "sizeof", "static", "static_cast", "struct", "switch", "template", "this", "thread_local", "throw", "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
+  ],
+  "comments": ["//", "/*", "*/"],
+  "strings": ["\"", "'"],
+  "types": [
+    "int", "char", "float", "double", "long", "short", "unsigned", "signed", "void", "bool", "wchar_t", "char16_t", "char32_t", "size_t", "ptrdiff_t", "intptr_t", "uintptr_t", "max_align_t", "nullptr_t", "auto", "decltype", "string", "vector", "map", "set", "list", "queue", "stack", "deque", "array", "tuple", "pair", "function", "shared_ptr", "unique_ptr", "weak_ptr", "thread", "mutex", "condition_variable", "future", "promise", "chrono", "regex", "random", "filesystem", "optional", "variant", "any", "string_view", "span", "ranges", "concepts", "coroutine", "module", "import", "export"
+  ],
+  "modifiers": [
+    "auto", "register", "static", "extern", "const", "volatile", "inline", "virtual", "explicit", "mutable", "friend", "public", "private", "protected", "template", "typename", "using", "typedef", "namespace", "export", "thread_local", "consteval", "constexpr", "constinit", "noexcept", "requires", "concept", "co_await", "co_return", "co_yield"
+  ]
+}

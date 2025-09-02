@@ -22,6 +22,12 @@ fun getSyntaxRulesForFile(context: Context, filename: String): SyntaxRules {
         filename.endsWith(".java") -> loadSyntaxRules(context, "java.json")
         filename.endsWith(".kt") -> loadSyntaxRules(context, "kotlin.json")
         filename.endsWith(".py") -> loadSyntaxRules(context, "python.json")
-        else -> loadSyntaxRules(context, "python.json") // default fallback
+        filename.endsWith(".c") -> loadSyntaxRules(context, "c.json")
+        filename.endsWith(".cpp") -> loadSyntaxRules(context, "cpp.json")
+        filename.endsWith(".cc") -> loadSyntaxRules(context, "cpp.json")
+        filename.endsWith(".cxx") -> loadSyntaxRules(context, "cpp.json")
+        filename.endsWith(".h") -> loadSyntaxRules(context, "c.json")
+        filename.endsWith(".hpp") -> loadSyntaxRules(context, "cpp.json")
+        else -> loadSyntaxRules(context, "kotlin.json") // default fallback
     }
 }

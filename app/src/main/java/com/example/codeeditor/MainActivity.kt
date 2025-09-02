@@ -1,9 +1,13 @@
 package com.example.codeeditor
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,6 +67,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        // Request storage permissions
+        requestStoragePermissions()
+        
         // Load Kotlin syntax rules by default since they support more comment types
         syntaxRules = loadSyntaxRules(this, "kotlin.json")
         setContent {
@@ -178,8 +186,13 @@ class MainActivity : ComponentActivity() {
                                 floatingActionButton = {
                                     IconButton(
                                         onClick = {
-                                            compileCode(context, editorState.textField.value.text, fileManager, currentFileName) { output ->
-                                                compileOutput = output
+                                            try {
+                                                compileCode(context, editorState.textField.value.text, fileManager, currentFileName) { output ->
+                                                    compileOutput = output
+                                                    showCompilerInterface = true
+                                                }
+                                            } catch (e: Exception) {
+                                                compileOutput = "Error: ${e.message}"
                                                 showCompilerInterface = true
                                             }
                                         },
@@ -237,6 +250,9 @@ class MainActivity : ComponentActivity() {
 
     private fun saveFile(filename: String) {
         fileManager.saveFile(filename, editorState.textField.value.text)
+        currentFileName = filename
+        // Update syntax rules based on file type
+        syntaxRules = getSyntaxRulesForFile(this, filename)
     }
 
     private fun openFile(filename: String) {
@@ -322,6 +338,53 @@ class MainActivity : ComponentActivity() {
                 text = newText,
                 selection = androidx.compose.ui.text.TextRange(newSelection)
             )
+        }
+    }
+    
+    private fun requestStoragePermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        
+        val permissionsToRequest = mutableListOf<String>()
+        
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission)
+            }
+        }
+        
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                STORAGE_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+    
+    companion object {
+        private const val STORAGE_PERMISSION_REQUEST_CODE = 100
+    }
+    
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        
+        when (requestCode) {
+            STORAGE_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    // Permissions granted
+                    android.util.Log.d("MainActivity", "Storage permissions granted")
+                } else {
+                    // Permissions denied
+                    android.util.Log.w("MainActivity", "Storage permissions denied")
+                }
+            }
         }
     }
     
