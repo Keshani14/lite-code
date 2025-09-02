@@ -30,4 +30,10 @@ class FileManager(private val context: Context) {
         val file = File(context.filesDir, fileName)
         return if (file.exists()) file.readText() else ""
     }
+    
+    // Check if a file exists
+    fun fileExists(fileName: String): Boolean {
+        val file = File(context.filesDir, fileName)
+        return file.exists()
+    }
 }

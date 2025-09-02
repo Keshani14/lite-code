@@ -99,12 +99,15 @@ fun DrawerContent(
     context: Context,
     onNewFile: (String) -> Unit,
     onOpenFile: (String) -> Unit,
-    onSaveFile: (String) -> Unit
+    onSaveFile: (String) -> Unit,
+    onCheckFileExists: (String) -> Boolean
 ) {
     var fileName = remember { mutableStateOf(initialFileName) }
     var showDialog = remember { mutableStateOf(false) }
     var showSaveDialog = remember { mutableStateOf(false) }
     var showOpenDialog = remember { mutableStateOf(false) }
+    var showConfirmDialog = remember { mutableStateOf(false) }
+    var pendingFileName = remember { mutableStateOf("") }
     val extensions = listOf(".kt", ".txt", ".java", ".py")
     var selectedExtension = remember { mutableStateOf(extensions.first()) }
 
@@ -247,9 +250,15 @@ fun DrawerContent(
                         fileName.value + selectedExtension.value
                     }
 
-                    onSaveFile(finalName)
-                    // Don't reset fileName.value to empty - keep the current filename
-                    showSaveDialog.value = false
+                    // Check if file already exists
+                    if (onCheckFileExists(finalName)) {
+                        pendingFileName.value = finalName
+                        showConfirmDialog.value = true
+                        showSaveDialog.value = false
+                    } else {
+                        onSaveFile(finalName)
+                        showSaveDialog.value = false
+                    }
                 }) { Text("Save") }
             },
             dismissButton = {
@@ -296,6 +305,28 @@ fun DrawerContent(
             }
         )
     }
+    
+    // Show confirmation dialog for file replacement
+    if (showConfirmDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog.value = false },
+            title = { Text("File Already Exists") },
+            text = { Text("A file named '${pendingFileName.value}' already exists. Do you want to replace it?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onSaveFile(pendingFileName.value)
+                    showConfirmDialog.value = false
+                }) { Text("Replace") }
+            },
+            dismissButton = {
+                TextButton(onClick = { 
+                    showConfirmDialog.value = false
+                    showSaveDialog.value = true // Reopen save dialog
+                }) { Text("Cancel") }
+            }
+        )
+    }
+    
     // Show "Open File" dialog
     if (showOpenDialog.value) {
         val initialFiles = context.filesDir.listFiles()?.toList() ?: emptyList()

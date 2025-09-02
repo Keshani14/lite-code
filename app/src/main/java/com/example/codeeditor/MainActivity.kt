@@ -98,7 +98,8 @@ class MainActivity : ComponentActivity() {
                             context = this,
                             onNewFile = { createNewFile(it) },
                             onOpenFile = { openFile(it) },
-                            onSaveFile = { saveFile(it) }
+                            onSaveFile = { saveFile(it) },
+                            onCheckFileExists = { fileManager.fileExists(it) }
                         )
                     }
                 ) {
